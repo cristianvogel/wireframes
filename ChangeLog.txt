@@ -1,0 +1,1046 @@
+2019-08-21 @cristian
+
+* Fixed IP address bug in WF FrameToOSC -- now correctly drives the Processing sketch example
+* Fixed 'Silent' parameter Type Error in WF WriteFramesRAM
+
+
+
+2017-11-20 @gustav @cristian 
+
+* Added: 'WF NearestNeighbourFitnessFunction'
+
+This algorithm will compare each element in a Frame to every other element, and compute its nearest neighbour, a neighbour being defined as the value which is closest to its own. 
+
+The algorithm then calculates the magnitude, or distance, to that nearest neighbour. The output of the fitness function is a Frame stream of the same Frame Period as the input, with the result of each distance computation sequenced in order. 
+
+Fitness functions, especially when combined with feedback, are part of the grounding theory of Cybernetics and dynamic systems. They have applications in artificial intelligence, molecular biology, economics and many more fields of study.
+
+Absolute
+If absolute is checked the output will be the absolute distance to the nearest neighbour. If unchecked the sign will be considered, meaning that if the nearest neighbour is lower in value the distance is negative, and if it is higher the distance is positive.
+
+InputFrames
+This is the input frame stream which will be processed through the fitness function algorithm. 
+
+As with all WireFrames modules, for correctly syncrhonised results the frame period (aka frame length) should be the same throughout the signal network.  
+
+FrameLength
+The Frame period of the frame stream at the input
+
+2017-10-31 @cristian
+
+* Added: 'WF Morph1DFrameShaper'
+
+FrameShapers generally plug into FrameShaper inputs. They provide a neat way to alter many parameters simultaneously, which is often the case when working with Frame data. 
+
+The shape of the wavetable specified in the FrameShaper, becomes expressed upon the Frame data.  
+
+Remember those Pin Art 3D scultpure toys from the 90s, where you push your hand into a matrix of pins, and they take on the shape of your hand? This is a bit like how a FrameShaper acts on Frame data.  The wavetable shape selected in the Wavetable field would be equivalent to hand or other object. The Frame data it acts upon would be equivalent to the matrix of pins. 
+
+A FrameShaper when correctly syncronised to the Frame Period of the module it is plugged to, will shape each Track of the Frame differently. What shaping affect this will be, is defined by the context of the WireFrame you are plugging into. 
+
+Alternatively, out of the context of WireFrames, this module can be used as an audio oscillator or phase generator at a fixed frequency of FrameLength samp.  
+
+TIP:
+Any Classes in the WireFrames library that can be affected by a FrameShaper, work in a bidirectional way around 0. What that means is that when the sample value of a FrameShaper is at 0 it won't affect. When it is negative it will shape the parameter downwards, when it is positive it will shape it upwards. 
+
+For example: 
+If you used a WF LinearRamp FrameShaper, set to FrameLength 128 and rising from -1 to 1, to shape the time constants of a WF RandomWalks generating 128 independent random walks with a global time constant of 3 s..... well, the first 64 walks will be updating much slower than the second 64. The first walk (Track 1) will be updating the slowest and the last walk (Track 128) will be updating the fastest. Track 64 in the middle will be updating at exactly the global time constant. 
+
+
+* Added: 'WF FrameToOscillator'
+
+This Class will take a Frame Input ideally with a Framelength of 4096 and create a wavetable oscillator from it, that you can control with !Frequency and !Envelope like other oscillators in Kyma. 
+
+Tip:
+With this oscillator and some WireFrames programming, it is possible to create Xenakis stochastic synthesis oscillator which changes its waveform every cycle and then some.....
+
+I made a nice example using the HoltWinters Smooth as a FrameShaper on to the FrameStream which defines the wavetable. The result shapes the changing of the waveform in such an original and smooth sounding way.
+
+* Added: 'WF Reducer'
+
+This module downsamples the Frame input. Use it to reduce information in a Frame. 
+
+Optionally you can choose to linearly interpolate between downsampled values.  If Interpolation is set to true, you can also adjust the rate of the interpolation between points, effectively a very simple type of sub frame averaging. 
+
+
+
+
+2017-10-30 @cristian
+
+* Added: 'WF FrameVisualiser'
+
+Use this Class to visualise any single wire Frame with beautiful graphics using our custom Kyma Tool - the NeverEngine Labs FrameVisualiser. You can find it in the WireFrames LIbrary folder.
+
+* Added: 'WF FrameVisualiser2D'
+
+Use this Class to visualise any 2D Frame such as the Lorenz Attractor, with beautiful graphics using our custom Kyma Tool - the NeverEngine Labs 2D Visualiser. You can find it in the WireFrames LIbrary folder.
+
+
+* Added: 'NeverEngine Labs 2D Visualiser.pci' 
+* Added: 'NeverEngine Labs Frame Visualiser.pci' 
+
+Two Kyma Tools written in Smalltalk which combine with the Classes above to visualise Frames in a pleasing graphical way.
+
+* Updated: 'WF FrameScope'
+
+v1.1 now allows you to name a Framescope instance in the VCS from the Class. Even accepts Smalltalk syntax!
+
+How to give the Scope a unique name. 
+
+If its one word just type it in. If you want spaces and punctuation you need to put it curlies and single quotes. eg. { 'Frame Scope Mojo' }
+
+This parameter field will accept algorithmic constructions in SmallTalk such as:
+
+{'FrameScope'&?VoiceNumber}
+
+TIP: If you want to do this after a replicator, it doesn't seem to work unless another Sound within the replication is also reading the ?VoiceNumber variable. 
+
+
+2017-10-29 @cristian
+
+* Added: 'WF FrameToOSC' 
+* Added: 'WF FrameToOSC Example'
+
+FrameToOSC will extract each Track from a Frame to a seperate OSC sending widget. 
+Internally it uses a stripped down variation of NEL SendOSC to acheive this. If you need more features like string rewriting, please check out our NEL OSC Tools Classes. 
+
+Known issues:
+
+* if the interpreter throws a ' cannot perform message' type error, this is because the VCS must have at least one hot value which is NOT generated by FramesToOSC. Just add something like !Scale in the Scale paramter field to get around that error.
+
+* if you are programming and changing a lot the messages, Kyma starts to try to memorise all messages sent and heard. It can begin to overload the memory and this seems to make a situation sometimes where all Sounds take a very long time to compile.  Try using the built in Kyma OSC Helper tool to make the Pacarana forget all the messages it has ever sent or received if you run into this issue.
+
+Example is a Processing Sketch and an OSCulator routing document so you can try some OSC output yourself.
+
+
+NeverEngine Labs WireFrames Library
+Designed by Cristian Vogel and Gustav Scholda.
+v1.0b5a
+
+2017-10-25 @cristian @gustav
+
+* Added: 'WF RemoveSpectrumMetadata'
+
+Removes the last 4 tracks from a spectrum because they are sometimes used for metadata which results in odd results when doing formantShifting for example.
+
+* Added: 'WF LinearRamp'
+
+Generates a linear ramp at the current FrameLength. Can be scaled and offset, and (smoothly) flipped without ever losing frame synchronisation. 
+For more features, such as exponential curvature, try the WF Curvilinear Ramp Class.
+
+* Added: 'WF FrameFlex'
+
+Stretches and compresses the incoming frame along the x-axis, with curvature, like a kind spring flex compression and expansion. Use for novel frame stretching and other types of remapping or shaping when working with Spectrum data or stretching and manipulating other Frame data in interesting ways.
+
+
+
+
+2017-10-23 @cristian
+
+* Added: 'WF Thresholds'
+
+Takes Frames at the input and compares against a signal at the Thresholds input. The signal at the Tresholds input can be any audio rate signal, but if it is also a FrameShaper or other Frame stream running at the same framelength period, you will perform syncronised Track thresholding. 
+
+In the default BooleanStates mode, if the sample value of a Track at the Frame Input is below the equivalent value at the Thresholds input, then its value is set to zero (false). If it is above the comparison sample at the threshold input, its value is set to one (true). 
+
+Optionally, you can choose to pass thru the Tracks value when above the threshold, rather than set to 1. 
+
+* Added: 'WF InterpolatedScaleAndOffset'
+
+Scale and Offset which are both always linearly interpolated at sample rate. Will work with Stereo input. 
+
+* Updated: 'WF RangeTo01' and 'WF 01ToFullRange'
+
+Added Mirror flag to both. Inverts the 0 to 1 output to be mirrored, i.e. from 0 to -1 and if you wish to convert back from the mirror, you can also check mirrored in the WF01ToFullRange
+
+
+2017-09-12 @cristian
+
+* Added to MadeWithWireFrames: "WF BarkProcessor"
+
+Uses FFT analysis divided into up to 24 Bark bands. 
+
+Cut offs in hz
+100 200 300 400 510 630 770 920 1080 1270 1480 1720 2000 2320 2700 3150 3700 4400 5300 6400 7700 9500 12000 15500 
+
+Optionally creates GlobalControllers with a prefix name you can specify, which will visualise the energy at each bark band. This is a psychoacoustic measurement. 
+
+"So what is this Bark frequency scale? First of all, the Bark scale was named in honor of acoustician Heinrich Barkhausen. On this scale, the audible spectrum runs from 0 to 24, each Bark being a sort of psychologically equal division. Lots of things in psychoacoustics work on the Bark scale rather than the scale of Hertz." - johndcook.com
+
+Class is only mono, you could use steroizer to create a stereo version, but take care to rename generated events carefully so as not to have a naming conflict. All generated event names must be unique! 
+
+
+
+
+2017-09-01 @cristian 
+
+* Added: "WF ShapedPolySignal.kym"
+
+
+This Class generates a new type of signal which we have decided to call a PolySignal. 
+
+It begins with a typical discrete signal, a wavetable which can be selected on the fly from a  multicycle "necklace" of wavetables. This signal is then expressed through the Frame, like the other FrameShapers in WireFrames Library. Its shape is "plotted" using each Track in the Frame. A low resolution Framelength, say 64 samp, will express the shape using only 64 Tracks. 
+
+By allowing each Track to be modulated by an external Frame synchronised signal (such as a CurvilinearRamp) whilst it also reads through the values of the source wavetable , then a linear discrete signal transforms into a spiralling dephased *polysignal*.    
+
+Its the Multidimensional Mexican Wave of DSP. 
+
+This means that each track of the Frame whose static value is set to render the shape of the discrete wavetable through the Frame, can be offset or dephased, so that it begins to express different parts of the discrete signal its reading from, at its fixed Track position in the frame. In order to begin this decorelation process, we need a base frequency which you can think of as a kind of LFO low frequency rate. This frequency is used by each Track in the Frame to look up its next value from the source wavetable, in other words to read through the wavetable. Basically, each Track is reading the source wavetable in sync, until we start to decorrelate the lookup positions of each Track using this low frequency oscillator, which is being slightly detuned for each Track. 
+
+What happens is that the Tracks begin to express the discrete wavetable shape along different timeindex paths, introducing a kind of other dimension to a one dimensional signal. The Frame continues to express the wavetable structure according to the each fixed Track position in the Frame ( the X dimension). The Y dimension we can say is the amplitude value of each Track read from the Frame before it updates (at an update frequency of FrameLength samp). And then the PolySignal has this Z-dimension, a kind of distance or depth which can almost appear to be zooming in or out. 
+
+Take a look on the FrameScopes, try and understand it with your eyes, and then with your ears. 
+
+We used this PolySignal to great effect in our Mode based Physical Modelling synth, the SciFi, to create dense micro modulations at different frequencies and phases such as you might find on the surface of a struck gong or cymbal. 
+
+The PolySignal may also have some special applications for granular synthesis, as well as complex additive synthesis forms and digital oscillators. It can also be used as SpectralLFO providing many unique phase effects when combined in a Product module with the Amps leg of spectrum analysis running at the same FrameLength.
+
+Also added is a Simplified version which has no external FrameShaper inputs. 
+
+* Added: "WF DoubleWireSpectrum.kym"
+
+Convenience Class which wraps a syntheticSpectrumFromSounds prototype to construct a Kyma spectrum from two Frame inputs. Optionally you can choose to drop any subsonic information below 20hz. Also, if you are generating synthetic amplitudes, the sum of all the amps can often clip, so you can also choose the Limiting option which will scale down the amps frame so it cannot clip when summed.  
+
+
+
+2017-09-01 @gustav
+
+* Added: "WF SampleAndHold.kym"
+* Added: "WF TrackAndHold.kym"
+
+Those two rather low level classes allow you to build your own custom freezing networks.
+Examples attached.
+
+* Added: "WF RandomGenerator.kym"
+
+A simple class that generates random values within a given TimeConstant and (optionally) interpolates in-between.
+
+
+2017-09-01 @cristian 
+
+* Added: "WF All Classes in Sub Collections" 
+
+Collection of all classes so far, organised into subcollections. You can import this into your Custom Prototypes, and the Classes will appear in your default prototypes sorted under sub categories preceded by WireFrames. To define custom prototypes in Kyma you need to:
+File -> Open -> From the dropdown list select "Custom Prototypes" -> Open the kym with all Sounds you want to use in the Custom Prototypes.
+Neat! 
+
+
+2017-09-01 @gustav
+
+* Added: "Amp-MultiBandSplitter.kym"
+
+An example of using the WF LogicalOperators to split the spectrum into bands based on their amplitude level.
+Use the Basic version for your own creations :)
+
+
+2017-08-31 @cristian
+
+* Added: "WF WorldLimiters.kym"
+
+You can think of the WireFrames Limiters as being equivalent to world limits in a virtual space, such as a video game or a particle simulation. We could say that the value held by one Track in a Frame, is equivalent to the position of an element in the game world, or particle system, updated every frame period. Using this analogy, lets look at the three types of world limiting. 
+
+Clipping Limiter: when an element is moving (being incremented) and it reaches its world limit, its output value through the limiter, will remain clipped at the same value as the threshold it has reached. Its output value will stay there until its input value returns under the limit.
+
+Mirror Limiter: when the moving element reaches its world limit, its output value through the limiter reflects its travel beyond the limit. Effectively the element appears to bounce off the limit, and move in the opposite direction for as long as its input value continues to increment past the threshold. When its input value begins to decrement, this path is reflected too, until it reaches the limit from the other side where it simply passes back through. 
+
+Wrapping Limiter: when the moving element reaches one of its world limits (for example the ceiling), its output value through the limiter wraps around and emerges at the opposite limit (for example the floor). 
+
+* Added: "Complex Swarm Systems.kym" to Made With WireFrames
+
+Dual Swarm systems complex example. Many interwoven 1D swarm dynamics control grain cloud example.
+
+
+2017-08-31 @gustav
+
+* Added: "WF AllClasses.kym"
+
+I just gathered all classes so far in a single kym so you can easily add them to your prototypes.
+To define custom prototypes in Kyma you need to:
+File -> Open -> From the dropdown list select "Custom Prototypes" -> Open the kym with all Sounds you want to use in the Custom Prototypes.
+
+
+2017-08-31 @gustav
+
+* Added: "WF SwarmDynamics.kym"
+
+3 new classes:
+WF SwarmDynamics
+WF SwarmIntelligence
+WF AgentStates
+
+See the demo to get a grasp of the Swarm System, if you feel lost feel free to post at #wireframes.
+
+
+2017-08-17 @gustav
+
+* Added: "WF FrameStretch.kym"
+
+This class lets you stretch or compress the values inside the frame (the best way to observe and grasp this is using a FrameScope). Using a constant for the Stretch input stretches/compresses the whole frame, however you can also use other frame-based signals to only process parts of the Frame.
+
+Check out the DEMO examples for an intuitive understanding of that complex process.
+
+
+2017-08-14 @cristian 
+
+* Added: 'WF FFTScope'
+
+A visualiser using FFT analysis and WireFrames modules. Its a little unorthodox for a technical FFT analysis scope, but is also pretty cool to have alongside the other scopes in Kyma.  
+
+2017-08-01 @gustav @cristian
+
+* Renamed: 'WF AR' to 'WF FunctionGeneratorAR' 
+
+Reworded description:
+
+Generates ?Framelength ammount of Attack and Release functions as a Frame signal. To gate an AR there needs to be a positive value at the TrackGates Input. In other words, a particular AR outputting on a particular Track number, will only trigger when it receives a positive value on its Track at the TrackGates input. 
+
+
+* Added: 'WF BiDiSmooth.kym'
+
+Slew rate limiting for all Tracks in a Frame. AttackTime controls how quickly the output reacts to increases in Frame Tracks values and ReleaseTime controls how quickly it responds to decreases in the Frame Tracks values.
+
+
+* Added: 'WF FeedbackLoopOutput.kym'
+
+The Kyma built-in FeedbackLoopOutput prototype has an undocumented internal limit to its delay time. This convenience Class behaves in the same way but is not limited in delay time.  
+
+Use it in conjunction with the normal Kyma FeedbackLoopInput prototype.
+
+Added: 'FrameFeedbackMachine.kym' to MadeWithWireFrames examples
+
+An example of wiring up all of the above to create a new kind of spectral delay effect.
+
+
+2017-07-29 @cristian
+
+* Added: 'WF FractalNoise'
+
+An update on the classic 'Perlin Noise' style audio rate noise generator from our NEL SPC SR Volume One pack.
+
+This kind of Noise lets you choose a fundamental frequency and arranges a set of other noise generators in octaves above. By changing the Persistence you can define how much of that octaves get mixed in - or mathematically LevelOctave(n) = Persistence^n. The module takes care of normalizing the output so when changing the Persistence the Level stays the same. 
+
+
+2017-07-21 @cristian
+
+
+* Added: 'WF CountTriggersModMirror.kym'
+
+This is a samplerate trigger counter that counts with Mirror Limiting.
+
+Mirror Limiter: when the step counter reaches the ceiling, its output value through the limiter reflects its travel beyond the limit. Effectively the counter appears to bounce off the limit, and count down in the opposite direction for as long as the input value continues to increment past the ceiling threshold. When the Modulo value is reached the Counter will reset to zero. When the counter reaches the Floor threshold, and the internal counter has still not reached the Modulo limit, the counter will reflect upwards again. This algorithm can rapidly create internally oscillating index counters for more complex modulo counting. 
+
+The left output of this Class normalised to the number of the counter divided by Mod (e.g. counter number 5 with mod: 10 results in an output of 5/10). 
+
+The right output is a 1 ms positive trigger when the counter resets to 0. 
+
+TIP: To use the reset output to trigger a Capytalk expression, paste the sound and substitute the 'L' with an 'R' to read from the the right leg output.
+
+TIP:To extract the actual integer counter in a SoundToGlobalController for example, multiply the output by the value in the maxSteps constant. For convenience, I have included an option to generate a counter as a STGC.
+
+
+
+
+
+* Added: 'WF toTrigger1ms.kym'
+
+Convenience Class converts any audio input into a 1 ms wide trig making a single sample trigger, like that from a threshold, more compatible with CapyTalk triggering.
+
+Input
+Input sound, ideally a 1 samp trigger.  If another sample wide trigger comes in before 1 ms has elapsed since the last one, it will extend the current 1 ms trigger on the outpu for another millisecond. 
+
+2017-07-20 @gustav
+
+* Added: 'WF LogicalOperators.kym'
+
+Convenience classes to allow basic logical operations: AND, OR, XOR, NOT.
+Also a WF AsLogicValue which is the equivalent to the CapyTalk message but works at samplerate.
+
+
+2017-07-18 @cristian
+
+* Updated: 'WF FFT Blur'
+
+V1.01 added unique seed and variable Time and Offset for the internal WF Blur
+
+
+2017-07-16 @cristian
+
+* Added: 'WF RangeTo01.kym'
+
+Convenience Class that takes its input (which can be double wire) and shifts its range to fit between 0 and 1. Useful for logical operations and thresholding.
+
+Also a Class for doing the opposite... 
+
+* Added: 'WF 01ToFullRange'
+
+Convenience Class that takes an input that may have been previously processed with RangeTo01 and rescales its range back to full (-1,1) range. Equivalent to  *2-1 in CapyTalk
+
+
+
+2017-07-16 @cristian
+
+* Added: 'WF countTriggersMod.kym'
+* Added: examples to 'WF Basic to Complex Step Sequencer.kym' using WFCTM core
+
+This is a samplerate trigger counter. 
+The output is the number of the trigger divided by Mod (e.g. trigger number 5 with mod: 10 results in an output of 5/10). 
+
+To extract the actual integer counter in a SoundToGlobalController for example, multiply the output by 
+
+(((!mod vmin: !ceiling) - !floor))
+
+Or for convenience, I have included an option to generate a counter as a STGC.
+
+Ceiling
+Integer for the ceiling value which can be less than Modulo
+
+Mod
+The module starts counting at 0 and wraps around when the value reaches Mod. (Integer expected)
+
+Floor
+Integer for the floor value, an offset of the lowest counting number
+
+Reset
+Send a logical trigger to reset the Counter. Converted to a 1 samp trigger internally.
+
+GeneratedIndex
+Give a name for a conveniently generated rounded integer counter. If you leave this field empty, no EventValue will be generated. 
+
+Silent
+in case you want to mute the audio output and use only the generated index
+
+Input
+Any audio input will be converted to 1 samp triggers internally
+
+
+
+
+
+
+2017-07-15 @cristian
+
+* Added: 'WF Basic to Complex Step Sequencer.kym' 
+
+Another type of Sequencer development. This time using a WF TrackSelector to step through Tracks as the basic mechanism of outputting values at a BPM rate. This KYM shows how I develop from that basic idea to a pretty complex morphing step sequencer using WireFrames programming. Wonder where this could lead to? Remember that the true power of WireFrames is that this idea can expand with smoothing and all the other processing, much more than 16 steps as I demonstrated in these examples
+
+
+
+2017-07-15 @cristian
+
+* Added: 	'WF FrameToGlobalControllers.kym'
+* Added: 	'WireFrames Sequencer.kym' and
+			'Downsampled Additive Feedback System.kym'
+			to MadeWithWireFrames Folder
+
+
+WF FrameToGlobalControllers
+
+The WF FTGC Class will extract values from a Frame stream and convert them into any number of EventValues (also known as Global Controllers).
+
+You can generate less EventValues than there are Tracks in the Frame. In other words you can extract only some of the Tracks from the full FrameLength. You can use offset to move around in the Frame in that case. 
+
+Alternatively you can explore Euclidean distributions when extracting less Tracks than there are Tracks in the Frame. This means you could extract or example 4 out of a Framelength of 32 and the extracted Tracks would be spread out evenly. 
+
+As EventValues can be scaled beyond -1,1 range , you can also use a ScalingArray to range each extracted EventValue into any number. This could be useful for OSC mapping. 
+
+EventValues will be updated on every trigger received in the Trigger field or every millisecond if the Trigger is set to 1, and Gated is set to True. 
+
+
+
+WireFrames Sequencer
+
+This is an experimental and totally new way of thinking about sequencing, built around the WF FrameToGlobalControllers core. WireFrames programming allows us to manipulate the 'step sequencer' in ways that have not been possible in Kyma before. Take a look at the examples which use WF RadianceGate or WF TrackDelays to find out more. 
+
+Downsampled Additive Feedback System
+
+Very experimental Additive synthesis system , wen visualised looks a bit like a rabbit/worm hole. Again build around the FrameToGlobalControllers core Class, using the fact that its generated EventValues can be used to create feedback systems. 
+
+
+2017-07-14 @cristian
+
+* Added: 'WF FrameMemory.kym'
+
+This Class that lets you store a certain number of frames into RAM and recall them later.
+Optionally, you can morph between saved states when you recall them. 
+
+Designed by Cristian Vogel and Gustav Scholda
+v1.0b3
+
+DoubleWire
+Set to true if you are working with paired Frame streams, travelling independently on the left and right outpus of Class. The most common examples of this type of signal is a Spectrum Frame stream.
+
+A Kyma Spectrum Frame (and NeverEngine Labs SPC Frame) will use the dual streams of information running on the 'double wire' to sonify (or resynthesise) the Frame data using an Oscillator bank or one of the other Kyma prototypes that resynthesise from Spectrum Frames. 
+
+Double wire spectrum data consists of one frame stream on the left channel carrying the Amplitude values that will specify the volume of each partial, and likewise one stream on the right channel with data that specifies the Frequencies for each partial.  
+
+NbrFrames
+Defines the number of frames to store.
+
+FrameLength
+Defines the FrameLength.
+
+RecallIndex
+Defines the memory location that should be at the output.
+
+InputFrames
+The input should be a frame-based signal.
+
+Store
+Trigger to store the current frame at the input at the location defines by StoreIndex.
+
+MemoryName
+Choose a unique name for each instance of this class.
+
+StoreIndex
+Defines the memory location that should be used to store the frame at the input.
+
+Morph
+When checked in-between values of RecallIndex will morph between the stored frames. Uncheck to save some DSP.
+
+
+* Added: 'WF ClipTo01.kym'
+
+Convenience Class which clips the incoming audio signal to the 0 to 1 range, discarding all negative values.
+
+2017-07-07 @gustav
+
+* Added: 'WF Blur.kym'
+
+Every TimeConstant s it will take a snapshot of the current frame. 
+Within the very same time it will interpolate from the previous snapshot to the current snapshot.
+
+I included 2 examples, one using the SpectralAnalysis, the other one using the FFT (+RandomPhase).
+
+* Added: 'WF Cartesian2Polar.kym'
+* Added: 'WF Polar2Cartesian.kym'
+
+Convenient classes for conversions of complex signals.
+
+
+2017-07-04 @cristian
+
+* Added: 'WF CompensatedLevel.kym'
+
+Use this Class  before resynthesis to compensate the Amplitude envelopes using an equal loudness psychoacoustic relationship to the Frequency envelopes (see Capytalk reference for compensatedLevel).
+
+Automatic DC blocking (less than 20 hz ) is also built in. Makeup gain of 12db when compensating to maximum is also built in, so the overall loudness doesn't drop. 
+
+When working with synthetically created DoubleWire spectra you can turn on Limiting to make sure the total sum of the Amp envelopes will never clip a sinewave based resynthesis bank. Use limiting with post gain to find a balance depending on your material. 
+
+NeverEngineLabs WireFrames Library
+Designed by Cristian Vogel and Gustav Scholda.
+v1.0b2
+
+
+2017-07-03 @cristian
+
+* Added: 'WF SequencedFrame.kym'
+
+SequencedFrame allows you to create audio rate Frame streams from Collections of VCS widgets, hot values, Capytalk expressions or fixed values. 
+
+The SequencedFrame can process the Collections before they become Frame streams using ShuffleSort, StretchFill and RepeatFill. These transformations are programmed in Smalltalk which means they are executed before being sent to the Pacarana. This means the transformations cannot be changed once the sound has started running. Nevertheless, once the Smalltalk Collection exists in the Frame domain, running at sample rate 'in the wire' , the control data can undergo sample accurate processing (blurring, averaging, shifting, randomising, shaping etc) very efficiently using the rest of Classes in the NeverEngineLabs WireFrames and SPCSR ibraries. 
+
+If you have less elements in your Capytalk Array than the FrameLength, which is often the case, you are provided with strategies for filling the Frame using only the data available. 
+
+Stretch fills the Frame proportionally with copies of each of the Capytalk (hot) values. For example if you have only 8 VCS widgets you would like to construct into a Frame of 256 elements, the Stretch fill will stretch the value of each widget over 32 samples, effectively stretching the data available out to fill the Frame.
+
+The other method is to repeat each of the Capytalk Array elements in order until the Frame is full. For example if you have only 8 VCS widgets you would like to construct into a Frame of 256 elements, the repeat fill will repeat the Capytalk array 32 times. This means that when you move one of the 8 VCS faders, its movement will be repeated 32 times periodically throughout the frame. 
+
+Try these modes on the Framescope to understand better how they work. 
+
+Shuffle (with seed) and retrograde (aka reverse) will be peformed after the above distribution strategies, in the order of transformations. 
+
+One further interesting feature for the composer, is that each Frame Array can  be masked by a boolean sieve. These sieve arrays can have a different length to the Frame Arrays, but the same distribution transformations still apply (Shuffle, stretch etc). Therefore you can mute and unmute values in the frame data using these masks. If you use time varying expressions here, for example  { 1 bpm: 20 } { 1 bpm: 30 } { 1 bpm: 60 }  you can easily sequence complex dynamic density effects.  To bypass the sieves, set both parameter fields to a single value of 1. 
+
+
+Tip: One of the big advantages of converting a Capytalk array to a Frame , is that it wont take much more DSP to process 8 hotvalues than it does to process 4096. Yes a delay of Framelength samp is introduced in order to process every value, but in almost all Kyma workflows (expect for live input processing) this is not a major problem. 
+
+NeverEngineLabs WireFrames™
+Designed by Cristian Vogel and Gustav Scholda
+v1.0b7
+
+* Added: 'The Secret Memory Formant Creation.kym' to Made With WireFrames
+
+A composition I created using the new SequencedFrame invention and starting from Kyma classic Clicks formant bank prototype.
+
+Explore through the composition with the Interpolate presets I set up in the VCS. 
+
+
+2017-06-29 @cristian 
+
+* Added: 'WF FreezeTracks.kym'
+
+This Class freezes individual Tracks in one Frame stream using the boolean logic value of the equivalent Tracks derived from another Frame stream passing a threshold.  
+
+When using this Class a Spectrum context, we recommend that you use a WF BlockDC before a resynthesis , as zeros in the Frequency information can cause undesirable low frequency information. 
+
+
+NeverEngineLabs WireFrames™
+Designed by Cristian Vogel and Gustav Scholda
+v1.0b2
+
+DoubleWire
+Set to true if you are working with paired Frame streams, travelling independently on the left and right outpus of the InputFrames and/or TrackFreezeShaper input. 
+
+The most common examples of this type of signal is a Spectrum Frame stream.
+
+A Kyma Spectrum Frame (and NeverEngine Labs SPC Frame) will use the dual streams of information running on the 'double wire' to sonify (or resynthesise) the Frame data using an Oscillator bank or one of the other Kyma prototypes that resynthesise from Spectrum Frames. 
+
+Double wire spectrum data consists of one frame stream on the left channel carrying the Amplitude values that will specify the volume of each partial, and likewise one stream on the right channel with data that specifies the Frequencies for each partial.  
+
+InputFrames
+Input Frame stream from which Tacks will be be frozen
+
+Reset
+Resets the frozen Tracks and reads directly from the InputFrames when above 0. 
+
+FrameLength
+The Frame period of the frame stream at the input and ideally the Frame stream at the Shaper Input
+
+Threshold
+Tracks from the InputFrames will be frozen according to whether the values in the Tracks of the TrackFreezeShaper have gone above this Threshold.
+
+Freeze
+Freezes the entire modified Frame result when above zero.
+
+TrackFreezeShaper
+FrameShapers generally plug into FrameShaper inputs. They provide a neat way to alter many parameters simultaneously, which is often the case when working with Frame data. 
+
+The shape of the wavetable specified in the FrameShaper, becomes expressed upon the Frame data. 
+
+In the case of WF TrackFreeze it is the input at the TrackFreezeShaper which will cause Tracks from the InputFrames to freeze, according to whether the values in the Tracks of the TrackFreezeShaper have passed the Threshold.
+
+FrozenTracksOnly
+Any value greater than 0 will output the frozen Tracks only and set unfrozen tracks to 0 
+
+* Added: 'WF Block DC'
+
+Convenience Class that will remove very low frequency information from Spectrum frames before resynthesis. USeful to avoid exploding Filterbanks or delay lines when Frequency information might be set to zero or very low by other WireFrames modules in a Spectral design. 
+
+Ideally put this module directly before the resynthesis bank to clip the frequency envelope at 20hz
+
+
+
+2017-06-27 @cristian
+
+Added: 'WF TrackMasking.kym'
+
+Use a Frame stream (or any other audio input) as a mask on another frame stream with optional fade up and fade down times.
+
+When a Track in the MaskingShaper input stream is above the threshold value, it will cause the same Track number to be muted out of the InputFrames stream. Optionally, you can define how long it takes to smoothly fade out the Track that is being muted, and how long it takes to smoothly fade it back in once the mask signal has dropped below the threshold. 
+
+When working with Spectrums and masking frequency information, you might want to block DC on the resulting Frequency using a Kyma SpectrumModifier or WF BlockDC 
+
+NeverEngineLabs WireFrames™ 
+Designed by Cristian Vogel and Gustav Scholda.
+v1.0b5
+
+FadeDownTime
+Define how long it takes to smoothly fade down the information on the Track that is being muted.
+If you don't need fades then set to 0 to save on DSP.
+
+
+InputFrames
+Single channel of Frame data which will get its Tracks muted and unmuted according to the MaskShaper stream
+
+FadeUpTime
+Define how long it takes to smoothly fade up the information on the Track that is being muted.
+If you don't need fades then set to 0 to save on DSP.
+
+
+MaskingShaper
+Single channel of Frame data which will mute and unmute Tracks in the InputFrames stream when a Track in the MaskShaper passes the threshold
+
+FrameLength
+FrameLength  - try to match Frame Lengths of the Input Frames and Mask Shaper to get the correct behaviour. 
+
+Threshold
+A Track from the MaskingShaper whose value is above this threshold will mute out the same TrackNumber in the the Input Frames
+
+FrameScope
+Generate a Framescope to see the behaviour of the masking
+
+
+2017-06-07 @gustav
+
+Added: 'WF Derivative.kym'
+
+This is a low level class outputting the derivative of each track. Basically the derivative tells you the changes of the current frame compared to the previous one. To get the second derivative (or the third, and so on..) you could daisychain those modules.
+
+
+2017-06-06 @gustav
+
+Added: 'SpectralHarmonizer.kym'
+
+Using the WF RoundTo to harmonize a spectrum according to MIDI input or straight in the VCS. 
+
+
+2017-05-22 @cristian
+
+Added: 'WF RadianceGate.kym'
+Added: 'WF TrackFilters.kym'
+
+* TrackFilters 
+Filters out Tracks from the start or the end of a Frame, sort of like a high and low cut off filter for TrackNumbers (rather than the values of each track). Optionally use Slope to allow some 'resonance' or 'radiance' of Tracks around the cut off points. 
+
+The thresholds are normalised to FrameLength, so 0.5 represents the TrackNumber at 50% of the FrameLength. If Slope is set high, the 'radiance' effect will wrap around from the high cutoff and reveal Track information from the start and ends of Frame. Observe on a Framescope to see what I mean. 
+
+Designed by Cristian Vogel and Gustav Scholda  / NeverEngineLabs.   v1.0b2
+
+* RadianceGate
+Use the Radiance Gate to reduce density in the Frame stream. It is a sieve filter which allows you to select one Track and then choose how many Tracks to allow through on either side of that Track, using a width control. 
+
+Width of 1 lets only the Center Track through, a width of 3 lets the Center Track plus each track on either side through and so on. 
+
+Unselected tracks will receive a 0 value at the output, and selected tracks will pass through at input values. 
+
+Its automatically working with single wire or double wire streams
+
+
+2017-05-14 @cristian
+
+Added: 'SpectralDelay Audio Processor.kym'
+
+A spectral delay Class with built in live spectral analysis and resynthesis, so you can use it as an audio effect, by directly feeding in a sample or other sound source.
+
+The internal analysis is set to a long frame (1024 samp) so expect some latency through the module between the dry signal and the processed one. 
+
+Its mono only, use stereoizer to make it stereo, but you may need to adjust the number of oscillators in the resynthesis bank in this case. Usually dividing by two is acceptable. 
+
+Designed by Cristian Vogel using WireFames.
+
+ 
+
+Direction
+Alter the spread of the spectral delay times over the spectrum when dispersion is non-zero
+
+MaxDelayTime
+The maximum delay time allowed - experiment with long delay times
+
+Dispersion
+Alter the delay times for each partial, works together with !Direction
+
+Mix
+mix between dry and wet - there is no latency compensation 
+
+FreqScale
+Scales the frequencies of the resynthesis
+
+NbrOscillators
+how many oscillators will be used to resynth - lower this to get more efficiency 
+
+Input
+A mono or stereo input, but only one channel will be analysed and delayed
+
+Phasor
+De-syncronises the effect of direction and dispersion when above 1 
+
+InputLevel
+Attenuate the level into the spectral delay. 
+
+Level
+Output level of effect
+
+2017-05-13 @cristian
+
+Added: 
+
+Three new examples of spectral TrackDelays to WF TrackDelays.kym
+
+
+2017-05-12 @gustav
+
+Added:
+* "WF TrackDelays.kym"
+* "WF RoundTo.kym"
+* "WF AR.kym"
+* "SpectralDelayWithFeedback.kym"
+
+TrackDelays:
+This class lets you delay each partial (track) individually. Delay sets the maximum delay time 
+while the DelayScaleFrames input scales the delay time for each track: If you use a ramp matching 
+4the FrameLength the first track will not be delayed and the last track will be delayed by the time 
+you've specified in Delay. 
+
+RoundTo:
+The input values will get rounded to the values you provide in the RoundTo parameter. 
+
+AR:
+Generates an individual AR for each Track. 
+To gate an AR there needs to be a positive value at the TrackGates Input.
+
+SpectralDelayWithFeedback:
+Putting it all together you get a really sweet Spectral Delay with Feedback. 
+I'm using random DelayScales and Feedback coefficients, but you can change the range in real-time.
+The WF AR works as a Stabiliser here, preventing the whole thing from blowing up.
+Short delay times give great Reverbs, longer delays give nice echo effects, extreme settings can turn everything into a drone or soundscape.
+
+
+2017-05-09 @gustav
+
+Added:
+* "WF TrackSelector.kym"
+
+The output of this module is the value of the selected track only. Similar to CapyTalk arrays the track count starts at 0. If you are not going to change the track number, for example using a compile-time constant like ?VoiceNumber, you can uncheck Dynamic to save some DSP.
+The module handles Single and DoubleWire frame streams automatically.
+
+
+2017-04-27 @gustav
+
+Added:
+* "AVGSplitSpectrum.kym"
+
+Based on the average amplitude we split the spectrum into two spectra:
+BelowAVG
+AboveAVG
+If those are at equal levels you would get the original sound again.
+We then use some more parameters to control the behaviour of the split:
+Hysteresis
+ScaleAVG
+SmoothSplit
+The results are subtle to weird non-linear filters.
+Added examples using Delay, PitchShifting & CloudBank Resynthesis.
+
+
+2017-04-23 @cristian
+
+Added: 
+Some experimental examples in Spectral Dynamics using Frame min and max to "WF AverageMinMax"
+
+
+2017-04-22 @cristian
+
+Added:
+* "ColumbiaPrinceton Style.kym"
+
+50s Tape music generator using WF Modules and my TapeTreatment Class from Signal Symbol Lab. 
+
+* "WireFrames DelayByFrames.kym"
+
+The output is a delayed version of the input keeping the frame in sync. 
+Some modules in WireFrames system introduce delays of one frame necessary to perform calculations on a frame that has just passed. In this case, you can use this module as a compensating delay to syncronise across the network if you need to. 
+It can also be used as a way of holding a frame for a given amount of Frames before splicing it back into the stream, "shifting" any frame horizontally at runtime using a hot value. 
+
+(more examples of use to come...)
+
+* "WF Level"
+
+Convenient Class which scales the Amps of a 'double wire' input stream of spectrum data. 
+Use this Class before resynthesising with an oscillator bank (or other resynthesis module) to scale only the amps leg, and not the frequency information. 
+
+* "WF AverageMinMax.kym"
+
+WireFrames Average
+------
+Outputs the average of all the values within one frame. Because it needs to read all values before calculating the average the output is delayed by 1 Frame.
+
+WireFrames Minimum
+------
+Outputs the minimum of all the values within one frame. Because it needs to read all values before calculating the minimum the output is delayed by 1 Frame.
+
+WireFrames Maximum
+-------
+Outputs the maximum of all the values within one frame. Because it needs to read all values before calculating the maximum the output is delayed by 1 Frame.
+
+More usage examples to come...
+
+2017-04-02 @cristian
+
+Added:
+* "WF FrameShift.kym"
+
+Use this Class to "shift" a Frame signal horizontally with wrap around, within the scope defined by FrameLength.
+
+* "WF CurvilinearRamp.kym"
+
+Frame syncronised ramp function with exponential curvature. 
+
+It can be used in a variety of ways. Firstly, as a basic sync generator for reading a Frame. In this context, settings with no curvature, linear full range rising ramps would be correct.
+
+On the other hand, you can also think of it as another type of FrameShaper, that affects each Track in the frame according to its position under a linear, or curvilinear, function. 
+
+For example, a rising ramp when multiplying a Frame, using a Product module for example, will scale each Track in a linear distribution. By introducing some curvature, the scaling affects of the ramp on each Track can be altered smoothly to make a less linear distribution, more curved. 
+
+One specific use case would be a spectral tilt EQ  on a Spectrum Frame stream. Use the curved ramp on the Amps stream. Set it to falling half range (1-0). This will allow lower partials to pass through unaffected whilst reducing the amplitudes of higher partials. Introducing some curvature allows you to explore different loudness curves and their psychoacoustic effects.
+
+Another example: An falling full range ramp used as a PitchShifting or FormantShifting Frame shaper would shift the pitch of the lower Tracks upwards and the higher Tracks downwards. 
+
+2017-04-01 @seanpflannery
+
+Added:
+* "control waves v3 MultiCycleWavetable_n12.wav"
+
+Sean contributed a necklace of wavetables useful for FrameShaper
+
+
+* "nice spectrum jitter (contributed by Sean Flannery).kym"
+
+>This is a 16 partial synthetic spectrum that uses Gustav's recent modal filter code and a set of spectrum I derived from freezing a .spc file vocal vowel file in the spectrum editor at three different points and noting the Frq and Amp values of the first 16 partials .
+
+>Wireframe modules have been used to apply jitter to different areas of the spectrum in different amounts, there is some lfo action going on.
+
+>Try out the morph parameter to crossfade between the dry synthetic spectrum and the modified one. Even without chorus it's a remarkaby rich sounding 16 part spectrum :slightly_smiling_face:
+very happy with results so far
+
+2017-03-30 @gustav
+
+Added:
+* "WF FrameModifier.kym"
+
+Most of the WireFrames classes contain a FrameShaper input. However if you want to shape frames at arbitrary points of the signal flow, you can use the FrameModifier. 
+
+It applies the same logic for the shaping:
+Input = 0 -> no shaping
+Input = 1 -> multiply by 16 (order = 4)
+Input = -1 -> multiply by 1/16 (order = 4)
+
+The order is an Integer which changes the multiplication coefficient:
+Order = 1 -> 1/2 to 2
+Order = 2 -> 1/4 to 4
+Order = 3 -> 1/8 to 8
+Order = 4 -> 1/16 to 16
+
+For those of you mathematically inclined, here's the formula:
+Output = InputFrames * ((2 ** Order) ** InputFrameShaper)
+
+Modified the examples from FrameMult to use the FrameModifier.
+
+Updated:
+* "WF FrameShaper.kym"
+
+You can now use bandwidth values higher than 1 to stretch the frame. Also I've added another parameter "scrub" which lets you scrub throught the multiCycleWavetable or select a portion of the table if stretched (Bandqidth > 1).
+
+* "WF RandomWalks.kym"
+
+Added an example on how to insert frequency jitter on a spectrum using the RandomWalks.
+
+
+2017-03-14 @gustav @cristian
+
+Added:
+
+
+* 'WF FrameMult.kym'
+
+
+
+Combines the input Frame stream with the signal at the FrameShaper input by scaling (multiplying) one with other. Use it to affect the value of each Track in the Frame stream using another Frame signal, such as a WF FrameShaper. Ideally the FrameShaper and the InputFrames should be in sync using the same FrameLength.
+
+* 'WF FrameShaper.kym'
+FrameShapers generally plug into FrameShaper inputs. They provide a neat way to alter many parameters simultaneously, which is often the case when working with Frame data.
+The shape of the wavetable specified in the FrameShaper, becomes expressed upon the Frame data.
+Remember those Pin Art 3D scultpure toys from the 90s, where you push your hand into a matrix of pins, and they take on the shape of your hand? This is a bit like how a FrameShaper acts on Frame data. The wavetable shape selected in the Wavetable field would be equivalent to hand or other object. The Frame data it acts upon would be equivalent to the matrix of pins.
+A FrameShaper when correctly syncronised to the Frame Period of the module it is plugged to, will shape each Track of the Frame differently. What shaping affect this will be, is defined by the context of the WireFrame you are plugging into.
+For example, in the WF RandomWalks one FrameShaper input alters the time constant of the each random walk. In this case a linear ramp FrameShaper will alter the deviation rates of the walks on the higher Tracks more than the lower ones. A FrameShaper sending a Gaussian wavetable would run the walks in the middle of the Frame at the specified Time Constant, whilst slowing down the rate of the walks at the bottom and at the top. Try it!
+Alternatively, out of the context of WireFrames, this module can be used as an audio oscillator or phase generator at a fixed frequency of FrameLength samp.
+
+
+
+* 'WF Placeholder.kym'
+
+* 'WF ConstantFrameShaper.kym'
+
+
+A couple of utility modules
+
+*'WF Stochastic Oscillator'
+Dual oscillators whose waveforms are changing every cycle with each sample point in each wavetable following the output of 4096 random walks (times 2 that makes 8192 stochastic signals updated every cycle!)
+
+Features built in highpass filters to reduce DC offset from the stochastic wavetables and an interpolated breakpoint reduction algorithm.
+Stochastic synthesis is heavily inspired by the pioneering work of Iannis Xenakis.'
+
+
+
+2017-03-14 @gustav
+* 
+
+Updated: "WireFrames Tutorial - Getting started.kym" 
+* 
+Updated: "WF RandomWalks.kym"
+
+
+
+The next turoial is online, now it's time to get into the world of frameShaping!
+Also on user request (thanks @luisaly) we extended the WF RandomWalks with a JoinTogether function.
+While at it I also added another FrameShaper input to shape the stepSizes. Included an example for stochastic Oscillators.
+
+
+2017-03-01 @cristian 
+
+Added: 'WF ParticleCloud.kym'
+Added: icon to WF SimpleArrayToFrame Class.
+
+
+WF ParticleCloud
+
+Particle cloud with multiple stochastic paths (or Random Walks) for each particle. 
+
+The influence of one set of random walks acts on the duration of each wavetable particle, therefore its pitch. If StochasticLevels is set to true, another independent set of random walks acts on the level of each particle.
+
+The source audio from which the particles are created can be of any duration. Be sure to extend the range of your ParticleDuration widget when using a longer duration  sample. 
+
+A multichannel output version of ParticleCloud is also available. 
+
+Created with NELabs WireFrames. 
+Design by Cristian Vogel 2017.
+
+
+
+
+2017-03-01 @gustav 
+
+* 
+
+Added: 'WireFrames Tutorial - Getting Started.kym'
+ 
+* Added: 'WF FrameScope.kym' 
+* 
+Added: 'WF SimpleArrayToFrame.kym' 
+* 
+Added: 'WF RandomWalks.kym'
+
+
+
+
+2017-03-01 @Cristian @Gustav
+
+
+Welcome to WireFrames Lab!
+
+
+
+
+1. Array vs. Frame
+
+You can think of an Array as a container holding a number of elements, the total number of elements being the ArrayLength (if you want to recap how arrays work in Kyma you should read Kyma X Revealed p. 129ff). Similarly a Frame is a container holding a number of elements, the total number of elements being the FrameLength. The difference is that Arrays are high level CapyTalk data types which you can work with in scripts, while Frames are basically low level audio signals which run 'in the wire'. 
+
+Arrays update at control rate (1 ms). You can index each element of an Array with a Capytalk or Smalltalk script. While Frames update at the current sample rate, streaming one element after another, as consecutive samples. Each sample in a Frame is called a Track.
+
+As a Frame is different to an Array, we don't index over elements anymore. Instead, we select Tracks from the Frame using sample accurate methods. 
+
+The update rate of the whole Frame is FrameLength samples. 
+
+For example: evaluating '512 samp s' will give you the duration of a complete Frame containing 512 Tracks at the current sample rate. This is the time needed to read through the equivalent of an Array containing 512 elements. 
+
+An example of Frame based data every Kyma user knows is the output of the LiveSpectralAnalysis or SpectrumFromRAM classes and the like. Spectral data could be seen as an array of amplitudes #(!Amp1 !Amp2 ...) and an array of frequencies #(!Freq1 !Freq2 ...) but it is transferred using Frames and Tracks which are read at audiorate. We'll see an example of that in section 3. Spectrum vs. Frame.
+
+So why all the fuss? Why not use Arrays all the time? The two main reasons for that are:
+
+- Transferring an Array from one module to another would be very difficult.
+- Computational efficiency. 
+
+The Paca(rana) DSP is very fast (and efficient) at processing audio sample per sample. 
+
+Imagine multiplying two arrays using CapyTalk:
+
+array1 := #(1 2 3 4).
+array2 := #(5 6 7 8).
+result := 0 to: 3 collect: [ :i | (i of: array1) * (i of: array2)].
+
+For small arrays like this, that's fine. But the bigger the arrays get, the more power is needed. Also if you want to add the result to another array or you want to combine e.g. 8 arrays in certain ways, Kyma will most likely overload at runtime (the crash results mostly because of the number of SoundToGlobalControllers needed in parallel). Also the scripts to do it get quite complex soon, so it's a rough path to walk (example 1a).
+
+
+
+Multiplying two Frame streams on the other hand is fast and efficient. The Paca(rana) processes sample per sample without ever dropping one or losing sync. Using a single Product module you can multiply two Frames with the same computational power no matter what the FrameLength is. Also it's not complex at all, just feed two frame based signals into a Product module, that's it (example 1b).
+
+The downside to all this serial processing is that we introduce some latency and you need to take care that the Framelength is respected throughout your Kyma Sound design for things to work properly. But WireFrames programming is really worth it for the big increases in efficiency and the new complex signal processing style that is made possible. 
