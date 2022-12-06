@@ -1,5 +1,5 @@
 # WireFrames for Kyma 7
-![](Supporting Files/PNG/WireFramesCubeIllusionLogo.png)
+![](https://github.com/cristianvogel/wireframes/Supporting Files/PNG/WireFramesCubeIllusionLogo.png)
 
 _Compatible with Paca(rana) and Pacamara generation APUs. Not compatible with Capybara-320 or older hardware._
 
@@ -20,4 +20,4 @@ Wiring up audio for use as _control_ signals in the studio, means that you may e
 **BE CAREFUL**. Think before you press play. Turn down speakers first just in case.
 
 * Read the Headphone Safety Warning EULA first!
-![](Headphone Safety Warning EULA IMPORTANT README.png)
+![](https://github.com/cristianvogel/wireframes/blob/main/Headphone%20Safety%20Warning%20EULA%20IMPORTANT%20README.png)
